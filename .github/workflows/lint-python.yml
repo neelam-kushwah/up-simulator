@@ -1,0 +1,29 @@
+name: lint_python
+on: [pull_request, push]
+jobs:
+  lint_python:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+      - run: pip install --upgrade pip wheel
+      - run: pip install flake8 autopep8
+
+      # Lint the code with flake8 with line length 120
+      - name: Lint with flake8
+        run: flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics --max-line-length=120
+
+      # Format the code with autopep8 with line length 120
+      - name: Format with autopep8
+        run: autopep8 --in-place --aggressive --aggressive --recursive . --max-line-length 120
+
+      # Pull latest changes, commit changes if any, and push back
+      - name: Commit and push changes if any
+        run: |
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@github.com'
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+          git pull origin ${{ github.ref_name }} --rebase
+          git add -A
+          git diff-index --quiet HEAD || git commit -m "Format code with autopep8"
+          git push origin HEAD:${{ github.ref_name }}
