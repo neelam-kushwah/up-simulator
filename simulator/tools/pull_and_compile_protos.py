@@ -39,9 +39,8 @@ from simulator.utils.constant import (
 def clone_or_pull(repo_url, PROTO_REPO_DIR):
     try:
         repo = Repo.clone_from(repo_url, PROTO_REPO_DIR)
-        print(
-            f"Repository cloned successfully from {repo_url} to {PROTO_REPO_DIR}"
-        )
+        print(f"Repository cloned successfully from {
+            repo_url} to {PROTO_REPO_DIR}")
         # Checkout the specific tag
         repo.git.checkout(TAG_NAME)
     except git.exc.GitCommandError:

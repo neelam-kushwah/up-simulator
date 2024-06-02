@@ -35,7 +35,8 @@ def save_rpc_data(socketio, lock_rpc, json_res):
                 f.write(',')
                 f.write('\n')
 
-            f.write(json.dumps(json_res, indent=2))  # Add a newline after each JSON object
+            # Add a newline after each JSON object
+            f.write(json.dumps(json_res, indent=2))
     except IOError as exc:
         print(exc)
     finally:
@@ -47,7 +48,10 @@ def save_rpc_data(socketio, lock_rpc, json_res):
             if data:
                 # Append square brackets to make it a valid JSON array
                 data = f'[{data}]'
-                socketio.emit(CONSTANTS.CALLBACK_RPCLOGGER, data, namespace=CONSTANTS.NAMESPACE)
+                socketio.emit(
+                    CONSTANTS.CALLBACK_RPCLOGGER,
+                    data,
+                    namespace=CONSTANTS.NAMESPACE)
     except IOError as exc:
         print(exc)
 
@@ -61,7 +65,8 @@ def save_pub_sub_data(socketio, lock_pubsub, json_res):
                 f.write(',')
                 f.write('\n')
 
-            f.write(json.dumps(json_res, indent=2))  # Add a newline after each JSON object
+            # Add a newline after each JSON object
+            f.write(json.dumps(json_res, indent=2))
     except IOError as exc:
         print(exc)
     finally:
@@ -73,6 +78,7 @@ def save_pub_sub_data(socketio, lock_pubsub, json_res):
             if data:
                 # Append square brackets to make it a valid JSON array
                 data = f'[{data}]'
-                socketio.emit(CONSTANTS.CALLBACK_PUBSUB_LOGGER, data, namespace=CONSTANTS.NAMESPACE)
+                socketio.emit(CONSTANTS.CALLBACK_PUBSUB_LOGGER,
+                              data, namespace=CONSTANTS.NAMESPACE)
     except IOError as exc:
         print(exc)

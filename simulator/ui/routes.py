@@ -106,7 +106,11 @@ def route_pubsub():
 @blueprint.route("/rpc-logger.html")
 def route_rpc_logger():
     try:
-        f = open(os.path.join(run_directory, "simulator", CONSTANTS.FILENAME_RPC_LOGGER))
+        f = open(
+            os.path.join(
+                run_directory,
+                "simulator",
+                CONSTANTS.FILENAME_RPC_LOGGER))
         data = f.read()
         f.close()
         data = f"[{data}]"
@@ -139,8 +143,10 @@ def download_RPC_file():
 def route_pubsub_logger():
     try:
         f = open(
-            os.path.join(run_directory, "simulator", CONSTANTS.FILENAME_PUBSUB_LOGGER)
-        )
+            os.path.join(
+                run_directory,
+                "simulator",
+                CONSTANTS.FILENAME_PUBSUB_LOGGER))
         data = f.read()
         f.close()
         data = f"[{data}]"

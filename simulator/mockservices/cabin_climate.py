@@ -76,11 +76,13 @@ class CabinClimateService(BaseService):
         self.state = {}
         self.number_of_zones = 0
         for zone in self.zone_names:
-            self.state[zone] = self.init_message_state(cabin_climate_topics_pb2.Zone)
+            self.state[zone] = self.init_message_state(
+                cabin_climate_topics_pb2.Zone)
             self.state[zone]["id"] = zone
         self.calc_number_of_zones()
         self.zone_names = set(self.zone_names)
-        self.settings_state = self.init_message_state(cabin_climate_topics_pb2.SystemSettings)
+        self.settings_state = self.init_message_state(
+            cabin_climate_topics_pb2.SystemSettings)
 
     def calc_number_of_zones(self):
         self.number_of_zones = 0
@@ -95,7 +97,9 @@ class CabinClimateService(BaseService):
         Handles ExecuteClimateCommand RPC calls
         """
         # check zone id
-        req_dict = MessageToDict(request.zone, including_default_value_fields=True)
+        req_dict = MessageToDict(
+            request.zone,
+            including_default_value_fields=True)
         zone_str = req_dict["id"]
         try:
             self.validate_zone_req(request, zone_str)
@@ -155,7 +159,8 @@ class CabinClimateService(BaseService):
 
         # handle SetTemperature request
         if isinstance(request, SetTemperatureRequest):
-            # todo return SetTemperatureResponse response, Implement your logic here
+            # todo return SetTemperatureResponse response, Implement your logic
+            # here
             pass
 
         # handle SetFan request
@@ -165,7 +170,8 @@ class CabinClimateService(BaseService):
 
         # handle SetAirDistribution request
         if isinstance(request, SetAirDistributionRequest):
-            # todo return SetAirDistributionResponse response, Implement your logic here
+            # todo return SetAirDistributionResponse response, Implement your
+            # logic here
             pass
 
         # handle SetPower request
@@ -192,7 +198,8 @@ class CabinClimateService(BaseService):
         if len(field_mask) == 0:
             # update all fields by adding them to the field mask
             for field in self.state[zone_str].keys():
-                # add "zone." prefix. this gets removed later, but services send this prefix
+                # add "zone." prefix. this gets removed later, but services
+                # send this prefix
                 field_mask.append("zone." + str(field))
 
         # remove "zone." prefix from field mask
@@ -215,7 +222,11 @@ class CabinClimateService(BaseService):
         row = groups.group(1)
         side = groups.group(2)
         mask = set(self.normalize_field_mask(request, zone_str))
-        synced_fields = set(["blower_level", "air_distribution", "air_distribution_auto_state", "auto_on", "is_power_on"])
+        synced_fields = set(["blower_level",
+                             "air_distribution",
+                             "air_distribution_auto_state",
+                             "auto_on",
+                             "is_power_on"])
         fields_to_update = mask & synced_fields
         if fields_to_update:
             if side == "right":
@@ -249,47 +260,56 @@ class CabinClimateService(BaseService):
 
             if self.state[zone_str]["is_power_on"] is False:
                 # power is currently off
-                fields_that_need_is_power_on = list(self.state[zone_str].keys())
+                fields_that_need_is_power_on = list(
+                    self.state[zone_str].keys())
                 fields_that_need_is_power_on.remove("is_power_on")
                 if field in fields_that_need_is_power_on:
-                    # if not turning power on and using a field which needs the power on, fail
-                    if not (("is_power_on" in field_mask_normalized) and (request.zone.is_power_on is True)):
-                        raise ValidationError(9, f"Unable to set {field} when zone power is off.")
+                    # if not turning power on and using a field which needs the
+                    # power on, fail
+                    if not (
+                        ("is_power_on" in field_mask_normalized) and (
+                            request.zone.is_power_on is True)):
+                        raise ValidationError(
+                            9, f"Unable to set {field} when zone power is off.")
 
-            # air_distribution_auto_state can only be AM_OFF or AM_AUTO when power is on.
+            # air_distribution_auto_state can only be AM_OFF or AM_AUTO when
+            # power is on.
             if field == "air_distribution_auto_state":
                 if request.zone.air_distribution_auto_state not in [
                     cabin_climate_topics_pb2.AutomaticMode.Value("AM_AUTO"),
                     cabin_climate_topics_pb2.AutomaticMode.Value("AM_OFF"),
                 ]:
                     raise ValidationError(
-                        2,
-                        f"Zone must be powered off to set air_distribution_auto_state to "
-                        f"{request.zone.air_distribution_auto_state}.",
-                    )
+                        2, f"Zone must be powered off to set air_distribution_auto_state to " f"{
+                            request.zone.air_distribution_auto_state}.", )
 
-            # air_distribution cannot be AD_OFF, AD_AUTO, or AD_UNSPECIFIED when power is off
+            # air_distribution cannot be AD_OFF, AD_AUTO, or AD_UNSPECIFIED
+            # when power is off
             if field == "air_distribution":
                 air_distrib_valid_values = cabin_climate_topics_pb2.AirDistribution.values()
-                air_distrib_valid_values.remove(cabin_climate_topics_pb2.AirDistribution.Value("AD_OFF"))
-                air_distrib_valid_values.remove(cabin_climate_topics_pb2.AirDistribution.Value("AD_AUTO"))
-                air_distrib_valid_values.remove(cabin_climate_topics_pb2.AirDistribution.Value("AD_UNSPECIFIED"))
+                air_distrib_valid_values.remove(
+                    cabin_climate_topics_pb2.AirDistribution.Value("AD_OFF"))
+                air_distrib_valid_values.remove(
+                    cabin_climate_topics_pb2.AirDistribution.Value("AD_AUTO"))
+                air_distrib_valid_values.remove(
+                    cabin_climate_topics_pb2.AirDistribution.Value("AD_UNSPECIFIED"))
                 if request.zone.air_distribution not in air_distrib_valid_values:
                     raise ValidationError(
-                        2,
-                        f"Zone must be powered off to set air_distribution_auto_state to "
-                        f"{request.zone.air_distribution_auto_state}.",
-                    )
+                        2, f"Zone must be powered off to set air_distribution_auto_state to " f"{
+                            request.zone.air_distribution_auto_state}.", )
 
             # check temp in range
             if field == "temperature_setpoint":
-                request.zone.temperature_setpoint = float(round(request.zone.temperature_setpoint))
-                if (request.zone.temperature_setpoint > max_temp) or (request.zone.temperature_setpoint < min_temp):
+                request.zone.temperature_setpoint = float(
+                    round(request.zone.temperature_setpoint))
+                if (request.zone.temperature_setpoint > max_temp) or (
+                        request.zone.temperature_setpoint < min_temp):
                     raise ValidationError(2, "Temperature out of range.")
 
             # blower level in range
             if field == "blower_level":
-                if (request.zone.blower_level > max_blower_level) or (request.zone.blower_level < min_blower_level):
+                if (request.zone.blower_level > max_blower_level) or (
+                        request.zone.blower_level < min_blower_level):
                     raise ValidationError(2, "Blower level out of range.")
 
             # update state
@@ -297,7 +317,8 @@ class CabinClimateService(BaseService):
 
             # blower level needs a calculation
             if field == "blower_level":
-                self.state[zone_str][field] = self.get_blower_level(self.state[zone_str][field])
+                self.state[zone_str][field] = self.get_blower_level(
+                    self.state[zone_str][field])
 
         return True
 
@@ -342,26 +363,25 @@ class CabinClimateService(BaseService):
                 self.settings_state[field] = self.get_est_cabin_temp()
             if field == "ac_compressor_setting":
                 if request.settings.ac_compressor_setting == cabin_climate_topics_pb2.SystemSettings.CompressorSetting.Value(
-                    "CS_UNSPECIFIED"
-                ):
-                    raise ValidationError(2, "settings.ac_compressor_setting cannot be set to CS_UNSPECIFIED")
+                        "CS_UNSPECIFIED"):
+                    raise ValidationError(
+                        2, "settings.ac_compressor_setting cannot be set to CS_UNSPECIFIED")
             if field == "heater_setting":
                 if request.settings.heater_setting == cabin_climate_topics_pb2.SystemSettings.HeaterSetting.Value(
-                    "HS_UNSPECIFIED"
-                ):
-                    raise ValidationError(2, "settings.heater_setting cannot be set to HS_UNSPECIFIED")
+                        "HS_UNSPECIFIED"):
+                    raise ValidationError(
+                        2, "settings.heater_setting cannot be set to HS_UNSPECIFIED")
 
             if self.number_of_zones < 2:
                 if field == "sync_all" or field == "sync_rear_to_driver" or field == "rear_zone_lockout":
                     raise ValidationError(
-                        2,
-                        "sync_all, sync_rear_to_driver, and rear_zone_lockout are not available " "when there is only 1 zone.",
-                    )
+                        2, "sync_all, sync_rear_to_driver, and rear_zone_lockout are not available "
+                        "when there is only 1 zone.", )
             if self.number_of_zones < 3:
                 if field == "sync_3rdRow_to_driver" or field == "third_row_zone_lockout":
                     raise ValidationError(
-                        2, "sync_3rdRow_to_driver and third_row_zone_lockout are not available when " "there is no third row."
-                    )
+                        2, "sync_3rdRow_to_driver and third_row_zone_lockout are not available when "
+                        "there is no third row.")
 
             self.settings_state[field] = getattr(request.settings, field)
 

@@ -22,8 +22,7 @@ SPDX-License-Identifier: Apache-2.0
 from simulator.core.abstract_service import BaseService
 
 from simulator.target.protofiles.vehicle.propulsion.engine.v1.engine_service_pb2 import (
-    ResetHealthRequest,
-)
+    ResetHealthRequest, )
 
 
 class EngineService(BaseService):
@@ -49,7 +48,8 @@ class EngineService(BaseService):
     def handle_request(self, request, response):
         # handle ResetHealth request
         if isinstance(request, ResetHealthRequest):
-            # todo return ResetHealthResponse response, Implement your logic here
+            # todo return ResetHealthResponse response, Implement your logic
+            # here
             pass
         response.status.code = 0
         response.status.message = "OK"

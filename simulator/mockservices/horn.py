@@ -70,7 +70,10 @@ class HornService(BaseService):
         try:
             self.validate_horn_req(request)
         except ValidationError as e:
-            print(f"ValidationError: return code {e.code} with message {e.message}")
+            print(
+                f"ValidationError: return code {
+                    e.code} with message {
+                    e.message}")
             response.code = e.code
             response.message = e.message
             # validation failed

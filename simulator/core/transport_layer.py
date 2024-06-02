@@ -55,7 +55,11 @@ class TransportLayer:
 
     def set_transport(self, transport: str):
         if self.__utransport != transport:
-            print("set transport, previous is", self.__utransport, "current is", transport)
+            print(
+                "set transport, previous is",
+                self.__utransport,
+                "current is",
+                transport)
             self.__utransport = transport
             self._update_instance()
 
@@ -80,12 +84,17 @@ class TransportLayer:
                 endpoint = [f"tcp/{zenoh_ip}:{zenoh_port}"]
                 print(f"EEE: {endpoint}")
                 conf.insert_json5(zenoh.config.MODE_KEY, json.dumps("client"))
-                conf.insert_json5(zenoh.config.CONNECT_KEY, json.dumps(endpoint))
+                conf.insert_json5(
+                    zenoh.config.CONNECT_KEY,
+                    json.dumps(endpoint))
             from up_client_zenoh.upclientzenoh import UPClientZenoh
-            self.__instance = UPClientZenoh(conf, UAuthority(name="test_authority"),
-                                            UEntity(name="test_entity", version_major=1))
+            self.__instance = UPClientZenoh(
+                conf, UAuthority(
+                    name="test_authority"), UEntity(
+                    name="test_entity", version_major=1))
 
-    def invoke_method(self, topic: UUri, payload: UPayload, calloptions: CallOptions) -> Future:
+    def invoke_method(self, topic: UUri, payload: UPayload,
+                      calloptions: CallOptions) -> Future:
         return self.__instance.invoke_method(topic, payload, calloptions)
 
     def send(self, umessage: UMessage) -> UStatus:

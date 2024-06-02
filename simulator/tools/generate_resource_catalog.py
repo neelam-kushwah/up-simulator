@@ -60,8 +60,15 @@ def create_method_json(service_uri, method_name, method_id):
     return json_structure
 
 
-def create_topic_json(service_uri, resource, message, topic_id, full_name, message_resource_prefix_dict):
-    prefix = next((d[message] for d in message_resource_prefix_dict if message in d), "")
+def create_topic_json(
+        service_uri,
+        resource,
+        message,
+        topic_id,
+        full_name,
+        message_resource_prefix_dict):
+    prefix = next((d[message]
+                  for d in message_resource_prefix_dict if message in d), "")
     if len(prefix) > 0:
         prefix = prefix + "."
     resource = prefix + resource
@@ -107,36 +114,43 @@ def get_protobuf_descriptor_data():
                         if isinstance(value, RepeatedCompositeContainer):
                             continue
                         properties.append({"name": field.name, "value": value})
-                service_json["node"] = create_service_json(service_name, version, service_id, properties)
+                service_json["node"] = create_service_json(
+                    service_name, version, service_id, properties)
 
                 method_nodes = []
                 for method in service_descriptor.methods_by_name.keys():
                     # get method object
-                    options = service_descriptor.methods_by_name[method].GetOptions()
+                    options = service_descriptor.methods_by_name[method].GetOptions(
+                    )
                     for field, value in options.ListFields():
                         if field.name == "method_id":
                             method_id = value
                             method_nodes.append(
-                                create_method_json(f"{KEY_URI_PREFIX}/{service_name}/{version}", method, method_id)
-                            )
+                                create_method_json(
+                                    f"{KEY_URI_PREFIX}/{service_name}/{version}",
+                                    method,
+                                    method_id))
                 message_option_descriptor = mod.DESCRIPTOR.message_types_by_name
                 for message in message_option_descriptor.keys():
                     if "Options" in message:
                         for key in ["resource_name", "name"]:
-                            if key in message_option_descriptor[message].fields_by_name.keys():
+                            if key in message_option_descriptor[message].fields_by_name.keys(
+                            ):
                                 for field, value in (
-                                    message_option_descriptor[message].fields_by_name[key].GetOptions().ListFields()
-                                ):
+                                        message_option_descriptor[message].fields_by_name[key].GetOptions().ListFields()):
                                     if "resource_name_mask" == field.name:
-                                        resource_name_mask_value = value.rstrip(".*")
+                                        resource_name_mask_value = value.rstrip(
+                                            ".*")
                                         if len(resource_name_mask_value) > 0:
                                             message_resource_prefix_dict.append(
                                                 {f"{message.replace('Options', '')}": resource_name_mask_value}
                                             )
                                         break
-                            for field, value in message_option_descriptor[message].GetOptions().ListFields():
+                            for field, value in message_option_descriptor[message].GetOptions(
+                            ).ListFields():
                                 if field.name == "base_topic_id":
-                                    message_options_dict.append({f"{message.replace('Options', '')}": value})
+                                    message_options_dict.append(
+                                        {f"{message.replace('Options', '')}": value})
                                     break
 
                 service_json["node"]["node"] = method_nodes
@@ -151,18 +165,22 @@ def get_protobuf_descriptor_data():
 
                         if "Resources" in message_mod.enum_types_by_name or "Resource" in message_mod.enum_types_by_name:
                             resources_key = "Resources" if "Resources" in message_mod.enum_types_by_name else "Resource"
-                            resources = message_mod.enum_types_by_name[resources_key].values_by_name.keys()
-                            value = next((d[message] for d in message_options_dict if message in d), 0)
+                            resources = message_mod.enum_types_by_name[resources_key].values_by_name.keys(
+                            )
+                            value = next(
+                                (d[message] for d in message_options_dict if message in d), 0)
                             base_topic_id = value
                             for field_key in message_mod.fields_by_name.keys():
                                 if "resource" in field_key:
                                     for field_options, field_value in (
-                                        message_mod.fields_by_name[field_key].GetOptions().ListFields()
-                                    ):
+                                            message_mod.fields_by_name[field_key].GetOptions().ListFields()):
                                         if "resource_name_mask" == field_options.name:
-                                            resource_name_mask_value = field_value.rstrip(".*")
-                                            if len(resource_name_mask_value) > 0:
-                                                message_resource_prefix_dict.append({f"{message}": resource_name_mask_value})
+                                            resource_name_mask_value = field_value.rstrip(
+                                                ".*")
+                                            if len(
+                                                    resource_name_mask_value) > 0:
+                                                message_resource_prefix_dict.append(
+                                                    {f"{message}": resource_name_mask_value})
 
                             for field, value in message_mod.GetOptions().ListFields():
                                 if field.name == "base_topic_id":
@@ -170,9 +188,8 @@ def get_protobuf_descriptor_data():
                                     break
                             for resource in resources:
                                 topic_id = (
-                                    base_topic_id
-                                    + message_mod.enum_types_by_name[resources_key].values_by_name[resource].number
-                                )
+                                    base_topic_id +
+                                    message_mod.enum_types_by_name[resources_key].values_by_name[resource].number)
                                 topic_nodes.append(
                                     create_topic_json(
                                         f"{KEY_URI_PREFIX}/{service_name}/{version}",
@@ -181,8 +198,7 @@ def get_protobuf_descriptor_data():
                                         topic_id,
                                         message_mod.full_name,
                                         message_resource_prefix_dict,
-                                    )
-                                )
+                                    ))
 
                     if service_json and topic_nodes and len(topic_nodes) > 0:
                         service_json["node"]["node"] = service_json["node"]["node"] + topic_nodes
@@ -196,7 +212,9 @@ def get_protobuf_descriptor_data():
 
 
 def write_topics_to_csv_file():
-    csv_file_path = os.path.join(RESOURCE_CATALOG_DIR, RESOURCE_CATALOG_CSV_NAME)
+    csv_file_path = os.path.join(
+        RESOURCE_CATALOG_DIR,
+        RESOURCE_CATALOG_CSV_NAME)
     with open(csv_file_path, "w", newline="") as csv_file:
         csv_writer = csv.writer(csv_file)
         for topic_info in topic_list:
@@ -208,7 +226,9 @@ def write_nodes_to_json_file(resource_catalog_json):
     # Write JSON data to the services.json
     if not os.path.exists(RESOURCE_CATALOG_DIR):
         os.makedirs(RESOURCE_CATALOG_DIR)
-    json_file_path = os.path.join(RESOURCE_CATALOG_DIR, RESOURCE_CATALOG_JSON_NAME)
+    json_file_path = os.path.join(
+        RESOURCE_CATALOG_DIR,
+        RESOURCE_CATALOG_JSON_NAME)
     with open(json_file_path, "w") as json_file:
         json.dump(resource_catalog_json, json_file, indent=2)
         print("resource_catalog.json is created successfully")

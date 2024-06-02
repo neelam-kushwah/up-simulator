@@ -19,20 +19,24 @@ SPDX-FileType: SOURCE
 SPDX-License-Identifier: Apache-2.0
 """
 
+from simulator.ui.utils.socket_utils import SocketUtility
+from simulator.ui.config import config_dict
+from simulator.ui import create_app
+from simulator.core.transport_layer import TransportLayer
+import simulator.utils.constant as CONSTANTS
+from flask_socketio import SocketIO
+from flask import request
 import os
 import sys
 import time
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+sys.path.insert(
+    0,
+    os.path.abspath(
+        os.path.join(
+            os.path.dirname(__file__),
+            "..")))
 
-from flask import request
-from flask_socketio import SocketIO
-
-import simulator.utils.constant as CONSTANTS
-from simulator.core.transport_layer import TransportLayer
-from simulator.ui import create_app
-from simulator.ui.config import config_dict
-from simulator.ui.utils.socket_utils import SocketUtility
 
 debug = False
 get_config_mode = "Debug" if debug else "Production"
@@ -63,7 +67,8 @@ def set_someip_config(localip, multicastip):
 def set_zenoh_config(routerip, port):
     transport_layer.set_zenoh_config(routerip, port)
     time.sleep(1)
-    socketio.emit(CONSTANTS.CALLBACK_ON_SET_TRANSPORT, '', namespace=CONSTANTS.NAMESPACE, )
+    socketio.emit(CONSTANTS.CALLBACK_ON_SET_TRANSPORT,
+                  '', namespace=CONSTANTS.NAMESPACE, )
 
 
 @socketio.on(CONSTANTS.API_SUBSCRIBE, namespace=CONSTANTS.NAMESPACE)

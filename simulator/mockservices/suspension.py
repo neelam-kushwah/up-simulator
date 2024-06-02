@@ -50,7 +50,8 @@ class SuspensionService(BaseService):
     def subscribe(self):
         super().subscribe(
             [
-                KEY_URI_PREFIX + "/chassis.suspension/1/ride_height_system_status#RideHeightSystemStatus",
+                KEY_URI_PREFIX +
+                "/chassis.suspension/1/ride_height_system_status#RideHeightSystemStatus",
             ],
             SuspensionPreconditions(self),
         )
@@ -63,7 +64,8 @@ class SuspensionService(BaseService):
             self.state[ride_height]["name"] = ride_height
 
         for status in RideHeightSystemStatus.Resources.keys():
-            self.state[status] = self.init_message_state(RideHeightSystemStatus)
+            self.state[status] = self.init_message_state(
+                RideHeightSystemStatus)
             self.state[status]["name"] = status
 
         self.state["preconditions"] = {}
@@ -87,7 +89,8 @@ class SuspensionService(BaseService):
         topic = re.search(r".*#", topic).group()[:-1]
 
         # assign value from message
-        # assumes message is of format {'source': 'S_APP'} as defined by protobuf
+        # assumes message is of format {'source': 'S_APP'} as defined by
+        # protobuf
         if "ride_height_system_status" in topic:
             self.state[topic]["source"] = message.source
 
@@ -116,7 +119,10 @@ class SuspensionService(BaseService):
         try:
             self.validate_suspension_req(request)
         except ValidationError as e:
-            print(f"ValidationError: return code {e.code} with message {e.message}")
+            print(
+                f"ValidationError: return code {
+                    e.code} with message {
+                    e.message}")
             response.status.code = e.code
             response.status.message = e.message
             # validation failed
@@ -149,22 +155,27 @@ class SuspensionService(BaseService):
 
                 if self.state["preconditions"]["ride height external control status"] == "active":
 
-                    if self.state["ride_height_system_status"]["source"] == RideHeightSystemStatus.Source.Value("S_USER"):
+                    if self.state["ride_height_system_status"]["source"] == RideHeightSystemStatus.Source.Value(
+                            "S_USER"):
                         self.state["ride_height"]["target_height"] = request.command
                         self.state["ride_height"]["current_height"] = request.command
 
                     elif self.state["ride_height_system_status"]["source"] == RideHeightSystemStatus.Source.Value("S_APP"):
 
-                        if request.command == RideHeight.RideHeightLevel.Value("RHL_UNSPECIFIED"):
-                            raise ValidationError(3, "Command value unspecified.")
+                        if request.command == RideHeight.RideHeightLevel.Value(
+                                "RHL_UNSPECIFIED"):
+                            raise ValidationError(
+                                3, "Command value unspecified.")
                         elif request.command in self.state["ride_height"]["supported_heights"]:
 
                             self.state["ride_height"]["target_height"] = request.command
                             self.state["ride_height"]["current_height"] = request.command
 
-                            if request.motion_speed != SetRideHeightRequest.MotionSpeedCommand.Value("MSC_UNSPECIFIED"):
+                            if request.motion_speed != SetRideHeightRequest.MotionSpeedCommand.Value(
+                                    "MSC_UNSPECIFIED"):
                                 self.state["ride_height"]["motion_speed"] = request.motion_speed
-                            if request.motion_type != SetRideHeightRequest.MotionTypeCommand.Value("MTC_UNSPECIFIED"):
+                            if request.motion_type != SetRideHeightRequest.MotionTypeCommand.Value(
+                                    "MTC_UNSPECIFIED"):
                                 self.state["ride_height"]["motion_type"] = request.motion_type
 
                 elif self.state["preconditions"]["ride height external control status"] == "Temporary Inhibit":
@@ -180,9 +191,11 @@ class SuspensionService(BaseService):
                 if request.command in self.state["ride_height"]["supported_heights"]:
                     self.state["ride_height"]["target_height"] = request.command
                     self.state["ride_height"]["current_height"] = request.command
-                if request.motion_speed != SetRideHeightRequest.MotionSpeedCommand.Value("MSC_UNSPECIFIED"):
+                if request.motion_speed != SetRideHeightRequest.MotionSpeedCommand.Value(
+                        "MSC_UNSPECIFIED"):
                     self.state["ride_height"]["motion_speed"] = request.motion_speed
-                if request.motion_type != SetRideHeightRequest.MotionTypeCommand.Value("MTC_UNSPECIFIED"):
+                if request.motion_type != SetRideHeightRequest.MotionTypeCommand.Value(
+                        "MTC_UNSPECIFIED"):
                     self.state["ride_height"]["motion_type"] = request.motion_type
 
         return True
@@ -212,5 +225,7 @@ class SuspensionPreconditions(UListener):
 
     def onEvent(self, uri, message):
         if message is not None:
-            print(f"Received a {type(message)} message with value(s) {message}")
+            print(
+                f"Received a {
+                    type(message)} message with value(s) {message}")
             self.suspension_service.set_topic_state(uri, message)

@@ -45,7 +45,8 @@ def get_messages(service_name):
 def get_display_name(input_str):
     parts = input_str.split('.')
     try:
-        formatted_str = ' '.join(part.capitalize() for part in parts[1].split('_') + parts[2:] if part)
+        formatted_str = ' '.join(part.capitalize()
+                                 for part in parts[1].split('_') + parts[2:] if part)
     except Exception:
         formatted_str = input_str.capitalize()
     return formatted_str
@@ -53,7 +54,10 @@ def get_display_name(input_str):
 
 def execute():
     for service in autoloader.get_services():
-        if service not in ["core.utelemetry", "core.usubscription", "core.udiscovery"]:
+        if service not in [
+            "core.utelemetry",
+            "core.usubscription",
+                "core.udiscovery"]:
             data_dict = {
                 "name": service,
                 "display_name": get_display_name(service),
@@ -65,7 +69,9 @@ def execute():
     # Create the directory if it doesn't exist
     if not os.path.exists(CONSTANTS.UI_JSON_DIR):
         os.makedirs(CONSTANTS.UI_JSON_DIR)
-    SERVICES_JSON_FILE_PATH = os.path.join(CONSTANTS.UI_JSON_DIR, CONSTANTS.SERVICES_JSON_FILE_NAME)
+    SERVICES_JSON_FILE_PATH = os.path.join(
+        CONSTANTS.UI_JSON_DIR,
+        CONSTANTS.SERVICES_JSON_FILE_NAME)
     # Write JSON data to the services.json
     with open(SERVICES_JSON_FILE_PATH, 'w') as json_file:
         json.dump(result_data, json_file, indent=2)

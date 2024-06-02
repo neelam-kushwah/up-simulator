@@ -21,10 +21,7 @@ SPDX-License-Identifier: Apache-2.0
 
 from simulator.core.abstract_service import BaseService
 from simulator.target.protofiles.vehicle.body.seating.v1.seating_service_pb2 import (
-    MoveSeatsRequest,
-    SetSeatTemperatureRequest,
-    SetSeatMassageRequest,
-)
+    MoveSeatsRequest, SetSeatTemperatureRequest, SetSeatMassageRequest, )
 
 
 class SeatingService(BaseService):
@@ -61,10 +58,12 @@ class SeatingService(BaseService):
             # todo return MoveSeatsResponse response, Implement your logic here
             pass
         elif isinstance(request, SetSeatTemperatureRequest):
-            # todo return SetSeatTemperatureResponse response, Implement your logic here
+            # todo return SetSeatTemperatureResponse response, Implement your
+            # logic here
             pass
         elif isinstance(request, SetSeatMassageRequest):
-            # todo return SetSeatMassageResponse response, Implement your logic here
+            # todo return SetSeatMassageResponse response, Implement your logic
+            # here
             pass
         response.status.code = 0
         response.status.message = "OK"

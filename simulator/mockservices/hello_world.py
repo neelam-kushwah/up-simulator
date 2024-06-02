@@ -59,7 +59,8 @@ class HelloWorldService(BaseService):
         super().__init__("example.hello_world", portal_callback)
 
     def start_publishing(self):
-        timer_pub_thread = Thread(target=self.PublishTimerMessage(), daemon=True)
+        timer_pub_thread = Thread(
+            target=self.PublishTimerMessage(), daemon=True)
         timer_pub_thread.start()
 
     # The UltifiLink.RequestListener decorator is used to define an RPC
@@ -113,6 +114,12 @@ class HelloWorldService(BaseService):
                 if time_of_day.minutes != current_time.minute:
                     time_of_day.minutes = current_time.minute
                     # publish one minute topic with payload every minute
-                    service.publish(one_min_topic, MessageToDict(Timer(time=time_of_day)))
+                    service.publish(
+                        one_min_topic, MessageToDict(
+                            Timer(
+                                time=time_of_day)))
                 # publish one second topic with payload every second
-                service.publish(one_sec_topic, MessageToDict(Timer(time=time_of_day)))
+                service.publish(
+                    one_sec_topic, MessageToDict(
+                        Timer(
+                            time=time_of_day)))

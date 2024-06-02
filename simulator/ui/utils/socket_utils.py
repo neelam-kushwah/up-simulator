@@ -168,7 +168,7 @@ class SocketUtility:
                     self.socketio.emit(
                         CONSTANTS.CALLBACK_PUBLISH_STATUS_SUCCESS,
                         {
-                            "msg" : "Publish Data  ",
+                            "msg": "Publish Data  ",
                             "data": self.last_published_data,
                         },
                         namespace=CONSTANTS.NAMESPACE,

@@ -90,9 +90,9 @@ def get_resources_from_message_class(message_class):
                     get_enums_without_fields(nested_message_class)
                 )
 
-        if (
-            field_descriptor.type == FieldDescriptor.TYPE_MESSAGE
-        ):  # Assuming type FieldDescriptor.TYPE_MESSAGE corresponds to a nested message
+        # Assuming type FieldDescriptor.TYPE_MESSAGE corresponds to a nested
+        # message
+        if (field_descriptor.type == FieldDescriptor.TYPE_MESSAGE):
             nested_message_class = (
                 field_descriptor.message_type._concrete_class
             )
@@ -105,7 +105,8 @@ def get_resources_from_message_class(message_class):
 
 
 def find_enum_fields_recursive(message_class):
-    # This function searched for all the enum fields with message na,e Resource or Resources
+    # This function searched for all the enum fields with message na,e
+    # Resource or Resources
     enum_fields = []
     for field_name in message_class.DESCRIPTOR.fields_by_name.keys():
         field_descriptor = message_class.DESCRIPTOR.fields_by_name[field_name]
@@ -180,7 +181,7 @@ def remove_key_prefix(json_data, prefix):
                 del json_data["property"]
             elif key == "rpcproperty" and value.startswith(prefix):
                 # Remove the key prefix
-                value = value[len(prefix) :]
+                value = value[len(prefix):]
                 json_data[key] = value
 
             elif isinstance(value, (dict, list)):
@@ -189,7 +190,7 @@ def remove_key_prefix(json_data, prefix):
         for item in json_data:
             if "key" in item:
                 new_prefix = item.get("key") + "."
-                item["key"] = item["key"][len(prefix) :]
+                item["key"] = item["key"][len(prefix):]
                 remove_key_prefix(item, new_prefix)
             remove_key_prefix(item, prefix)
 

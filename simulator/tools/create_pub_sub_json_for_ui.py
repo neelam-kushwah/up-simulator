@@ -94,23 +94,23 @@ def remove_key_prefix(json_data, prefix):
         ):  # Use list() to avoid modifying the dictionary while iterating
             if key == "property" and value.startswith(prefix):
                 # Remove the key prefix
-                value = value[len(prefix) :]
+                value = value[len(prefix):]
                 json_data[key] = value
                 property_text_key = key + "Text"
                 if (
                     property_text_key in json_data
                     and json_data[property_text_key] == value
                 ):
-                    del json_data[
-                        property_text_key
-                    ]  # Remove propertyText key if its value is the same as property
+                    # Remove propertyText key if its value is the same as
+                    # property
+                    del json_data[property_text_key]
             elif isinstance(value, (dict, list)):
                 remove_key_prefix(value, prefix)
     elif isinstance(json_data, list):
         for item in json_data:
             if "key" in item:
                 new_prefix = item.get("key") + "."
-                item["key"] = item["key"][len(prefix) :]
+                item["key"] = item["key"][len(prefix):]
                 remove_key_prefix(item, new_prefix)
             remove_key_prefix(item, prefix)
 

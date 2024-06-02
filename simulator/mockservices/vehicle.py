@@ -53,9 +53,12 @@ class VehicleService(BaseService):
     def subscribe(self):
         super().subscribe(
             [
-                KEY_URI_PREFIX + "/vehicle/1/trip_meter.trip_1#TripMeter",
-                KEY_URI_PREFIX + "/vehicle/1/trip_meter.trip_2#TripMeter",
-                KEY_URI_PREFIX + "/vehicle/1/vehicle_usage.transport_mode#VehicleUsage",
+                KEY_URI_PREFIX +
+                "/vehicle/1/trip_meter.trip_1#TripMeter",
+                KEY_URI_PREFIX +
+                "/vehicle/1/trip_meter.trip_2#TripMeter",
+                KEY_URI_PREFIX +
+                "/vehicle/1/vehicle_usage.transport_mode#VehicleUsage",
             ],
             VehiclePreconditions(self),
         )
@@ -89,7 +92,8 @@ class VehicleService(BaseService):
         topic = re.search(r".*#", topic).group()[:-1]
 
         # assign value from message
-        # assumes message is of format {'is_operation_allowed': true} as defined by protobuf
+        # assumes message is of format {'is_operation_allowed': true} as
+        # defined by protobuf
         print(f"Topic name: {topic}")
 
         if isinstance(message, TripMeter):
@@ -117,7 +121,10 @@ class VehicleService(BaseService):
         try:
             self.validate_vehicle_req(request)
         except ValidationError as e:
-            print(f"ValidationError: return code {e.code} with message {e.message}")
+            print(
+                f"ValidationError: return code {
+                    e.code} with message {
+                    e.message}")
             response.code = e.code
             response.message = e.message
             # validation failed
@@ -140,7 +147,9 @@ class VehicleService(BaseService):
         # Request Trip Meter Request
         if isinstance(request, ResetTripMeterRequest):
             if request.trip_meter not in TripMeter.Resources.values():
-                raise ValidationError(12, f"Unsupported trip meter name {request.trip_meter}.")
+                raise ValidationError(
+                    12, f"Unsupported trip meter name {
+                        request.trip_meter}.")
             elif request.trip_meter == TripMeter.Resources.Value("trip_1"):
                 self.state["trip_1"]["value"] = float(0)
             elif request.trip_meter == TripMeter.Resources.Value("trip_2"):
@@ -169,7 +178,11 @@ class VehicleService(BaseService):
         """
         if isinstance(request, ResetTripMeterRequest):
             # get trip_meter key from value, expecting 0 - trip_1 or 1 - trip_2
-            trip_val = list(TripMeter.Resources.keys())[list(TripMeter.Resources.values()).index(request.trip_meter)]
+            trip_val = list(
+                TripMeter.Resources.keys())[
+                list(
+                    TripMeter.Resources.values()).index(
+                    request.trip_meter)]
             topic = KEY_URI_PREFIX + "/vehicle/1/trip_meter." + trip_val + "#TripMeter"
             self.publish(topic, self.state[trip_val], True)
 
@@ -193,7 +206,9 @@ class VehiclePreconditions(UListener):
 
     def onEvent(self, uri, message):
         if message is not None:
-            print(f"Recieved a {type(message)} message with value(s) {message}")
+            print(
+                f"Recieved a {
+                    type(message)} message with value(s) {message}")
             self.vehicle_service.set_topic_state(uri, message)
 
 

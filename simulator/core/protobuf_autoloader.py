@@ -70,7 +70,8 @@ def populate_protobuf_classes():
 
     cwd = pathlib.Path(__file__).parent.resolve()
     # Specify the relative path to the CSV file
-    relative_path = os.path.abspath(os.path.join(cwd, "../target/resource_catalog"))
+    relative_path = os.path.abspath(
+        os.path.join(cwd, "../target/resource_catalog"))
     # Combine the current working directory and the relative path
     csv_file_path = relative_path + os.sep + RESOURCE_CATALOG_CSV_NAME
     with open(csv_file_path, "r") as csv_file:
@@ -96,22 +97,23 @@ def populate_protobuf_classes():
 
                 topics_list = [item[0] for item in topic_messages]
                 for endpoint in service_node["node"]:
-                    # Get the id of topic and store it- this id is needed for SOME IP integration
+                    # Get the id of topic and store it- this id is needed for
+                    # SOME IP integration
                     if endpoint["type"] == "topic":
                         uri = endpoint["uri"]
                         topics_list.index(uri)
-                        topic_messages[topics_list.index(endpoint["uri"])].append(
-                            endpoint["id"]
-                        )
+                        topic_messages[topics_list.index(
+                            endpoint["uri"])].append(endpoint["id"])
 
                     if endpoint["type"] == "method":
                         uri = endpoint["uri"]
-                        groups = re.search(r"/([\w\.]+)/([0-9\.]+)/rpc.(\w+)", uri)
+                        groups = re.search(
+                            r"/([\w\.]+)/([0-9\.]+)/rpc.(\w+)", uri)
                         if groups:
                             service_name = groups.group(1)
-                            api_version = int(
-                                float(groups.group(2))
-                            )  # this is really a semver but simulationproxy only uses ints.
+                            # this is really a semver but simulationproxy only
+                            # uses ints.
+                            api_version = int(float(groups.group(2)))
                             name = groups.group(3)
                             if service_name not in rpc_topics.keys():
                                 rpc_topics[service_name] = {}
@@ -122,28 +124,26 @@ def populate_protobuf_classes():
                                     "id": "",
                                 }
                                 rpc_topics[service_name][name]["versions"].append(
-                                    api_version
-                                )
-                                rpc_topics[service_name][name]["uri"].append(uri)
+                                    api_version)
+                                rpc_topics[service_name][name]["uri"].append(
+                                    uri)
                                 rpc_topics[service_name][name]["id"] = endpoint["id"]
                             elif (
                                 api_version
                                 not in rpc_topics[service_name][name]["versions"]
                             ):
                                 rpc_topics[service_name][name]["versions"].append(
-                                    api_version
-                                )
-                                rpc_topics[service_name][name]["uri"].append(uri)
+                                    api_version)
+                                rpc_topics[service_name][name]["uri"].append(
+                                    uri)
                                 rpc_topics[service_name][name]["id"] = endpoint["id"]
 
                             else:
                                 print(
-                                    f"Warning: possible duplicate method name detected for {uri}"
-                                )
+                                    f"Warning: possible duplicate method name detected for {uri}")
                         else:
                             print(
-                                f"Warning: RPC method name and service name could not be determined for {uri}"
-                            )
+                                f"Warning: RPC method name and service name could not be determined for {uri}")
         except Exception:
             print("Warning: except occured during parsing of Resource Catalog:")
             traceback.print_exc()
@@ -178,9 +178,12 @@ def get_protobuf_descriptor_data():
             continue
         services = []
         for service in _services:
-            options = str(mod.DESCRIPTOR.services_by_name[service].GetOptions())
+            options = str(
+                mod.DESCRIPTOR.services_by_name[service].GetOptions())
             groups = re.search(
-                r"^\[" + CONSTANTS.KEY_PROTO_ENTITY_NAME + '\\.name\\]:\\s"([\\w.]+)"$',
+                r"^\[" +
+                CONSTANTS.KEY_PROTO_ENTITY_NAME +
+                '\\.name\\]:\\s"([\\w.]+)"$',
                 options,
                 re.MULTILINE,
             )
@@ -196,8 +199,10 @@ def get_protobuf_descriptor_data():
         messages = mod.DESCRIPTOR.message_types_by_name.keys()
         for message in messages:
             if message in message_to_module:
-                print(f"WARNING: Duplicate message type detected for {message}")
-                print(f"{mod.DESCRIPTOR.message_types_by_name[message].full_name}")
+                print(
+                    f"WARNING: Duplicate message type detected for {message}")
+                print(
+                    f"{mod.DESCRIPTOR.message_types_by_name[message].full_name}")
                 print(f"{message_to_module[message]}")
             message_to_module[
                 mod.DESCRIPTOR.message_types_by_name[message].full_name
@@ -223,7 +228,9 @@ def get_protobuf_descriptor_data():
                         != rpc_methods[rpc_info["name"]]["full_name"]
                     ):
                         print("*" * 60)
-                        print(f"WARNING: Duplicate RPC method name detected: {m.name}:")
+                        print(
+                            f"WARNING: Duplicate RPC method name detected: {
+                                m.name}:")
                         print(
                             "If you see this message, please email neelam.kushwah@gm.com"
                         )
@@ -236,7 +243,8 @@ def get_protobuf_descriptor_data():
                 # for legacy purposes, keep a dict keyed only by method name when service is None.
                 # for methods of the same name but in different services, we can only keep the last method
                 # processed.
-                # this is to ease migration to passing in the service name, which we haven't done historically
+                # this is to ease migration to passing in the service name,
+                # which we haven't done historically
                 rpc_methods[None][m.name] = rpc_info
                 rpc_fullname_methods[m.full_name] = rpc_info
 
@@ -288,7 +296,8 @@ def find_message(message_full_name):
                         # bug in google library? TimeOfDay should be in google.type package
                         # but does not appear to be.
                         if basename == "TimeOfDay":
-                            mod = importlib.import_module("google.type.timeofday_pb2")
+                            mod = importlib.import_module(
+                                "google.type.timeofday_pb2")
                             message_class = getattr(mod, basename)
                             return message_class
                         else:
@@ -305,16 +314,17 @@ def get_response_class(service, rpc_name):
 
 
 def parse_method(service, rpc_method, containing_module):
-    input_class = find_message_class(containing_module, rpc_method.input_type.full_name)
+    input_class = find_message_class(
+        containing_module,
+        rpc_method.input_type.full_name)
     output_class = find_message_class(
         containing_module, rpc_method.output_type.full_name
     )
     try:
         (versions, uri) = get_rpc_method_uri(service, rpc_method)
     except Exception:
-        print(
-            f"ERROR: URI not found for RPC method {rpc_method.name} in service {service}."
-        )
+        print(f"ERROR: URI not found for RPC method {
+            rpc_method.name} in service {service}.")
         return None
     if uri is not None:
         uri = uri
@@ -335,12 +345,17 @@ def find_message_class(containing_module, class_full_name):
 
     try:
         # look in services protobuf file
-        class_obj = getattr(importlib.import_module(containing_module), class_base_name)
+        class_obj = getattr(
+            importlib.import_module(containing_module),
+            class_base_name)
     except (ModuleNotFoundError, AttributeError):
         try:
             # look in topics protobuf file
             class_obj = getattr(
-                importlib.import_module(containing_module.replace("service", "topics")),
+                importlib.import_module(
+                    containing_module.replace(
+                        "service",
+                        "topics")),
                 class_base_name,
             )
         except (ModuleNotFoundError, AttributeError):
@@ -358,14 +373,11 @@ def find_message_class(containing_module, class_full_name):
             except (ModuleNotFoundError, AttributeError):
                 try:
                     # try wellknown types
-                    class_obj = getattr(
-                        importlib.import_module("google.protobuf.wrappers_pb2"),
-                        class_base_name,
-                    )
+                    class_obj = getattr(importlib.import_module(
+                        "google.protobuf.wrappers_pb2"), class_base_name, )
                 except (ModuleNotFoundError, AttributeError):
                     print(
-                        f"WARNING: Unable to find protobuf definition for {class_full_name}"
-                    )
+                        f"WARNING: Unable to find protobuf definition for {class_full_name}")
                     class_obj = None
 
     return class_obj
@@ -406,7 +418,8 @@ def _populate_message(service_name, message_class, data_dict):
     for field in message_class.DESCRIPTOR.oneofs:
         # there is a bug in the protobuf library where optional fields also appear in message.DESCRIPTOR.oneofs.
         # we can differentiate between optional and oneof fields by checking the number of fields.
-        # optional fields will only have 1 field, whereas oneof fields will have more than one.
+        # optional fields will only have 1 field, whereas oneof fields will
+        # have more than one.
         if len(field.fields) > 1:
             oneofs.append(field.name)
     oneofs = set(oneofs)
@@ -488,7 +501,8 @@ def _populate_message(service_name, message_class, data_dict):
 
     # make sure a list is defined for repeated values
     for field in get_message_fields(message_class):
-        if type(message_class.DESCRIPTOR.fields_by_name[field].default_value) is list:
+        if type(
+                message_class.DESCRIPTOR.fields_by_name[field].default_value) is list:
             if field in _next_args:
                 tmp = _next_args[field]
                 if type(tmp) is not list:
@@ -631,12 +645,8 @@ def unpack_data_dict(data_dict):
 def find_request_by_type(service, message_type):
     global rpc_methods
     for method in rpc_methods[service].keys():
-        if (
-            message_type
-            == rpc_methods[service][method]["request"].DESCRIPTOR.full_name.split(".")[
-                -1
-            ]
-        ):
+        if (message_type == rpc_methods[service][method]
+                ["request"].DESCRIPTOR.full_name.split(".")[-1]):
             return rpc_methods[service][method]["request"]
 
     # massage service name to something in the python namespace.
@@ -644,7 +654,8 @@ def find_request_by_type(service, message_type):
     # to need to search message_to_module
     if service == "app.iv_bev":
         service = "app.bev"
-    # hacky way to look for messages which are not apart of an rpc method (ie subpub)
+    # hacky way to look for messages which are not apart of an rpc method (ie
+    # subpub)
     for message, module in message_to_module.items():
         if service in message and message_type == message.split(".")[-1]:
             return find_message(message)

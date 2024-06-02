@@ -90,47 +90,56 @@ class BodyMirrorsService(BaseService):
 
         # handle SlideSideMirror request
         if isinstance(request, SlideSideMirrorRequest):
-            # todo return SlideSideMirrorResponse response, Implement your logic here
+            # todo return SlideSideMirrorResponse response, Implement your
+            # logic here
             pass
 
         # handle FoldSideMirror request
         if isinstance(request, FoldSideMirrorRequest):
-            # todo return FoldSideMirrorResponse response, Implement your logic here
+            # todo return FoldSideMirrorResponse response, Implement your logic
+            # here
             pass
 
         # handle UnfoldSideMirror request
         if isinstance(request, UnfoldSideMirrorRequest):
-            # todo return UnfoldSideMirrorResponse response, Implement your logic here
+            # todo return UnfoldSideMirrorResponse response, Implement your
+            # logic here
             pass
 
         # handle TiltSideMirror request
         if isinstance(request, TiltSideMirrorRequest):
-            # todo return TiltSideMirrorResponse response, Implement your logic here
+            # todo return TiltSideMirrorResponse response, Implement your logic
+            # here
             pass
 
         # handle UntiltSideMirror request
         if isinstance(request, UntiltSideMirrorRequest):
-            # todo return UntiltSideMirrorResponse response, Implement your logic here
+            # todo return UntiltSideMirrorResponse response, Implement your
+            # logic here
             pass
 
         # handle ActivateHeatedSideMirror request
         if isinstance(request, ActivateHeatedSideMirrorRequest):
-            # todo return ActivateHeatedSideMirrorResponse response, Implement your logic here
+            # todo return ActivateHeatedSideMirrorResponse response, Implement
+            # your logic here
             pass
 
         # handle DeactivateHeatedSideMirror request
         if isinstance(request, DeactivateHeatedSideMirrorRequest):
-            # todo return DeactivateHeatedSideMirrorResponse response, Implement your logic here
+            # todo return DeactivateHeatedSideMirrorResponse response,
+            # Implement your logic here
             pass
 
         # handle UpdateSideMirrorMovementSettings request
         if isinstance(request, UpdateSideMirrorMovementSettingsRequest):
-            # todo return UpdateSideMirrorMovementSettingsResponse response, Implement your logic here
+            # todo return UpdateSideMirrorMovementSettingsResponse response,
+            # Implement your logic here
             pass
 
         # handle UpdateHeatedSideMirrorsSettings request
         if isinstance(request, UpdateHeatedSideMirrorsSettingsRequest):
-            # todo return UpdateHeatedSideMirrorsSettingsResponse response, Implement your logic here
+            # todo return UpdateHeatedSideMirrorsSettingsResponse response,
+            # Implement your logic here
             pass
         response.code.code = 0
         response.code.message = "OK"

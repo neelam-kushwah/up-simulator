@@ -198,8 +198,7 @@ class SocketClient:
                                             callback.on_receive(parsed_message)
                                     else:
                                         print(
-                                            f"No callback registered for uri: {uri_str}. Discarding!"
-                                        )
+                                            f"No callback registered for uri: {uri_str}. Discarding!")
                                 else:
                                     uri_str = LongUriSerializer().serialize(
                                         parsed_message.attributes.sink
@@ -211,8 +210,7 @@ class SocketClient:
                                         callback.on_receive(parsed_message)
                                     else:
                                         print(
-                                            f"No callback registered for uri: {uri_str}. Discarding!"
-                                        )
+                                            f"No callback registered for uri: {uri_str}. Discarding!")
 
                             elif action in [
                                 "publish_status",
@@ -226,7 +224,8 @@ class SocketClient:
                                     status_id = json_data.get("status_id")
                                     if status_id in u_status:
                                         event = u_status[status_id]
-                                        u_status[status_id] = (event, parsed_message)
+                                        u_status[status_id] = (
+                                            event, parsed_message)
                                         event.set()
                             elif action == "rpc_response":
                                 parsed_message = UMessage()
@@ -256,8 +255,7 @@ class SocketClient:
                                     in self._create_topic_status_callbacks
                                 ):
                                     print(
-                                        f"create topic status called {topic_uri_str}"
-                                    )
+                                        f"create topic status called {topic_uri_str}")
                                     callbacks = (
                                         self._create_topic_status_callbacks[
                                             topic_uri_str
@@ -270,9 +268,8 @@ class SocketClient:
                                             parsed_message.message,
                                         )
                                 else:
-                                    print(
-                                        f"No create topic callback registered for uri: {topic_uri_str}. Discarding!"
-                                    )
+                                    print(f"No create topic callback registered for uri: {
+                                        topic_uri_str}. Discarding!")
                             elif action == "start_service":
                                 parsed_message = UStatus()
                                 parsed_message.ParseFromString(serialized_data)
@@ -280,7 +277,8 @@ class SocketClient:
                                 if service_name in r_services:
                                     event, status = r_services[service_name]
                                     if parsed_message.code == UCode.OK or parsed_message.code == UCode.ALREADY_EXISTS:
-                                        r_services[service_name] = (event, True)
+                                        r_services[service_name] = (
+                                            event, True)
                                     event.set()
 
                         print(f"Received from server: {json_data}")
@@ -331,12 +329,14 @@ class AndroidBinder(UTransport, RpcClient):
         # Start a separate thread for receiving
 
     def start_service(self, entity) -> bool:
-        # write data to socket, this action will start the android mock service and create all topics
+        # write data to socket, this action will start the android mock service
+        # and create all topics
         json_map = {"action": "start_service", "data": entity}
         message_to_send = json.dumps(json_map) + "\n"
         start_service_event = threading.Event()
         global r_services
-        # Update the service status with start_service_event set to False initially
+        # Update the service status with start_service_event set to False
+        # initially
         r_services.update({entity: (start_service_event, False)})
         self.client.send_data(message_to_send)
         # Wait for the service to start with a timeout of 10 seconds
@@ -428,12 +428,18 @@ class AndroidBinder(UTransport, RpcClient):
             if UriValidator.is_rpc_method(uri):
                 self.__add_rpc_request_callback(uri_key, listener)
                 # write data to socket
-                json_map = {"action": "register_rpc", "data": uri_str, "status_id": status_id}
+                json_map = {
+                    "action": "register_rpc",
+                    "data": uri_str,
+                    "status_id": status_id}
                 print("register rpc for ", uri)
             else:
                 self.__add_subscribe_callback(uri_key, listener)
                 # write data to socket
-                json_map = {"action": "subscribe", "data": uri_str, "status_id": status_id}
+                json_map = {
+                    "action": "subscribe",
+                    "data": uri_str,
+                    "status_id": status_id}
                 print("subscribe to ", uri)
 
             message_to_send = json.dumps(json_map) + "\n"

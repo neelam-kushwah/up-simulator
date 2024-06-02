@@ -23,8 +23,7 @@ SPDX-License-Identifier: Apache-2.0
 import re
 
 from simulator.target.protofiles.vehicle.chassis.v1.chassis_service_pb2 import (
-    UpdateTireRequest,
-)
+    UpdateTireRequest, )
 from simulator.target.protofiles.vehicle.chassis.v1.chassis_topics_pb2 import (
     Tire,
 )
@@ -79,7 +78,8 @@ class ChassisService(BaseService):
             self.state[tire] = self.init_message_state(Tire)
             self.state[tire]["resource_name"] = tire
 
-    # Topic Name grabs From the Environment.py Finds the Messages to the Ubus Leak State and So on
+    # Topic Name grabs From the Environment.py Finds the Messages to the Ubus
+    # Leak State and So on
     def set_topic_state(self, uri, message):
         """
         Sets state dictionary with values passed by the uBus, overwritting default values assigned during initialization
@@ -93,7 +93,8 @@ class ChassisService(BaseService):
         topic = re.search(r".*#", topic).group()[:-1]
 
         # assign value from message
-        # assumes message is of format {'leak_state': true} as defined by protobuf
+        # assumes message is of format {'leak_state': true} as defined by
+        # protobuf
         self.state[topic]["leak_state"] = message.leak_state
         self.state[topic]["is_leak_detection_enabled"] = message.is_leak_detection_enabled
 
@@ -127,7 +128,8 @@ class ChassisService(BaseService):
                     and self.state[tire]["is_leak_detection_enabled"] is True
                 ):
                     self.state[tire]["is_leak_present"] = True
-                    self.state[tire]["leak_state"] = Tire.TireLeakState.Value("TLS_NO_LEAK")
+                    self.state[tire]["leak_state"] = Tire.TireLeakState.Value(
+                        "TLS_NO_LEAK")
 
                 # Testcase_03
                 elif (
@@ -141,7 +143,8 @@ class ChassisService(BaseService):
                 elif self.state[tire]["is_leak_detection_enabled"] is False and request.is_leak_present is True:
                     self.state[tire]["is_leak_present"] = True
                     self.state[tire]["is_leak_notification_enabled"] = True
-                    raise ValidationError(2, "is_leak_detection_enabled: False")
+                    raise ValidationError(
+                        2, "is_leak_detection_enabled: False")
 
                 # Testcase_05
                 elif (
@@ -151,7 +154,8 @@ class ChassisService(BaseService):
                 ):
                     self.state[tire]["is_leak_present"] = True
                     self.state[tire]["is_leak_notification_enabled"] = True
-                    raise ValidationError(2, "is_leak_detection_enabled: False")
+                    raise ValidationError(
+                        2, "is_leak_detection_enabled: False")
 
                 # Testcase_01
                 else:
