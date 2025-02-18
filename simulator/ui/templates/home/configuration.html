@@ -54,9 +54,9 @@
                                         <div class="underline"></div>
 
                                     </div>
-                                    <div class="httpProxy" style="display:flex;width:100%;margin:40px 0px 20px 10px;">
+                                    <div class="httpProxy" style="display:flex;width:100%;align-items: center;margin:40px 0px 20px 10px;">
 
-                                        <div class="floating-inputbox" style="width:42%" id="inputunicastip">
+                                        <div class="floating-inputbox" style="width:32%" id="inputunicastip">
                                             <div class="floating-label">
                                                 <input class="floating-input" id="localip" type="text">
                                                 <label class="input-label">Unicast IP</label>
@@ -64,11 +64,18 @@
                                         </div>
 
 
-                                        <div class="floating-inputbox" style="width:42%" id="inputmulticastip">
+                                        <div class="floating-inputbox" style="width:32%" id="inputmulticastip">
                                             <div class="floating-label">
                                                 <input class="floating-input" id="multicastip" type="text">
                                                 <label class="input-label" style="left:30px;">Multicast IP</label>
                                             </div>
+                                        </div>
+
+                                         <div style="position: relative;margin-left:30px">
+                                            <span class="mb-0"  style="color:#FFFF;font-size:14px">Enable SOME/IP Serialization</span>
+                                            <input class="toggle" id="cbSomeipSerializer" type="checkbox" />
+                                            <label for="cbSomeipSerializer" style="background: transparent !important"></label>
+
                                         </div>
 
                                     </div>

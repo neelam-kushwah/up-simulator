@@ -31,7 +31,10 @@ from simulator.ui.utils.file_utils import save_pub_sub_data, save_rpc_data
 from simulator.utils import common_util, constant
 from simulator.utils.common_util import flatten_dict
 from tdk.core import protobuf_autoloader
-
+from tdk.helper import someip_helper
+from uprotocol.v1.uattributes_pb2 import (
+    UPayloadFormat,
+)
 total_rpc = 0
 success_rpc = 0
 logger = logging.getLogger("Simulator")
@@ -151,13 +154,17 @@ def publish_status_handler(socketio, lock_pubsub, utransport, topic, status_code
 
 def on_receive_event_handler(socketio, lock_pubsub, utransport, topic, payload: UPayload):
     try:
+        print("neelam")
+        print(topic)
         topic = tdk_constants.KEY_URI_PREFIX + topic
 
         topic_class = protobuf_autoloader.uri_id_to_message_module_map[topic]
         res = common_util.get_class(topic_class)
 
         res = UPayload.unpack(payload, res)
+
         original_members = MessageToDict(res, preserving_proto_field_name=True, including_default_value_fields=True)
+        print(original_members)
         members = flatten_dict(original_members)
         topic_str = protobuf_autoloader.get_uri_str_from_uuri(topic)
         json_res = {

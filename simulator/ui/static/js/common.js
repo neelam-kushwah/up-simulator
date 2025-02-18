@@ -28,6 +28,10 @@ if (localStorage.getItem("ip_multicast") == null || localStorage.getItem("ip_mul
     localStorage.getItem("ip_multicast") == 'undefined') {
     localStorage.setItem("ip_multicast", "224.224.224.245")
 }
+if (localStorage.getItem("someip_serializer") == null || localStorage.getItem("someip_serializer") == "" ||
+    localStorage.getItem("someip_serializer") == 'undefined') {
+    localStorage.setItem("someip_serializer", False)
+}
 if (localStorage.getItem("zenoh_router_ip") == null || localStorage.getItem("zenoh_router_ip") == "" ||
     localStorage.getItem("zenoh_router_ip") == 'undefined') {
     localStorage.setItem("zenoh_router_ip", "10.0.0.33")
@@ -75,6 +79,7 @@ function setupSocket() {
         if (segment.includes('configuration')) {
             document.getElementById("localip").value = localStorage.getItem("ip_local")
             document.getElementById("multicastip").value = localStorage.getItem("ip_multicast")
+            document.getElementById("cbSomeipSerializer").checked = localStorage.getItem("someip_serializer")
             document.getElementById("zenohrouterip").value = localStorage.getItem("zenoh_router_ip")
             document.getElementById("zenohrouterport").value = localStorage.getItem("zenoh_router_port")
 

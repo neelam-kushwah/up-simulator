@@ -11,14 +11,14 @@ terms of the Apache License Version 2.0 which is available at
 
 SPDX-License-Identifier: Apache-2.0
 */
-
 function saveConfig() {
     if (validateConfig()) {
         if (document.querySelector('#utransportConfig').value == "SOME/IP") {
             showSpinner()
             localStorage.setItem("ip_local", document.getElementById("localip").value)
             localStorage.setItem("ip_multicast", document.getElementById("multicastip").value)
-            socket.emit("set_someip_config", document.getElementById("localip").value, document.getElementById("multicastip").value)
+            localStorage.setItem("someip_serializer", document.getElementById("cbSomeipSerializer").checked)
+            socket.emit("set_someip_config", document.getElementById("localip").value, document.getElementById("multicastip").value,document.getElementById("cbSomeipSerializer").checked )
         } else if (document.querySelector('#utransportConfig').value == "ZENOH") {
             showSpinner()
             localStorage.setItem("zenoh_router_ip", document.getElementById("zenohrouterip").value)

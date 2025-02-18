@@ -31,8 +31,8 @@ REQUIREMENTS = [i.strip() for i in open(os.path.join("requirements.txt")).readli
 setup(
     name=project_name,
     author="Neelam Kushwah",
-    author_email="neelam.kushwah@gm.com",
-    version="0.1.1-dev",
+    author_email="neelam.kushwah@sdvlabs.com",
+    version="0.1.3-dev",
     python_requires=">=3.8",
     packages=find_packages(),
     package_data={
